@@ -13,11 +13,6 @@ const selectContacts = createSelector(
   (contacts) => contacts
 );
 
-// const selectContacts = createSelector(
-//     state => state.contacts.items,
-//     contacts => contacts.filter(contact => contact.name == name)
-// )
-
 const ContactList = () => {
   const dispatch = useDispatch();
   const onRemoveContact = (id) => dispatch(deleteContact(id));

@@ -13,12 +13,13 @@ import {
 
 axios.defaults.baseURL = "http://localhost:3000";
 
-export const fetchContacts = (name) => async (dispatch) => {
+export const fetchContacts = () => async (dispatch, getState) => {
   dispatch(fetchContactsRequest());
 
   try {
+    const { contacts } = getState();
     const params = {};
-    if (name) params["name_like"] = `^${name}`;
+    if (contacts.filter.name) params["name_like"] = `^${contacts.filter.name}`;
 
     const { data } = await axios.get(`/contacts`, { params });
 
@@ -33,6 +34,7 @@ export const addContact = (contact) => async (dispatch) => {
 
   try {
     await axios.post("/contacts", contact);
+    dispatch(fetchContacts());
     dispatch(addContactSuccess());
   } catch (error) {
     dispatch(addContactError(error));
@@ -44,6 +46,7 @@ export const deleteContact = (id) => async (dispatch) => {
 
   try {
     await axios.delete(`/contacts/${id}`);
+    dispatch(fetchContacts());
     dispatch(deleteContactSuccess());
   } catch (error) {
     dispatch(deleteContactError(error));

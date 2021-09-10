@@ -1,7 +1,8 @@
 import styles from "./style.module.css";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { addContact } from "../../Redux/actionsR";
+import shortid from "shortid";
+import { addContact } from "../../redux/contacts/contacts-operations";
 
 export default function Form() {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ export default function Form() {
       return;
     }
 
-    dispatch(addContact({ name, number }));
+    dispatch(addContact({ id: shortid.generate(), name, number }));
 
     setName("");
     setNumber("");

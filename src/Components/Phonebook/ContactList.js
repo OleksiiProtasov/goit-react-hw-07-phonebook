@@ -1,21 +1,32 @@
 import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import { deleteContact } from "../../Redux/actionsR";
+import { createSelector } from "@reduxjs/toolkit";
+import {
+  fetchContacts,
+  deleteContact,
+} from "../../redux/contacts/contacts-operations";
 import styles from "./style.module.css";
+import { useEffect } from "react";
+
+const selectContacts = createSelector(
+  (state) => state.contacts.items,
+  (contacts) => contacts
+);
+
+// const selectContacts = createSelector(
+//     state => state.contacts.items,
+//     contacts => contacts.filter(contact => contact.name == name)
+// )
 
 const ContactList = () => {
   const dispatch = useDispatch();
   const onRemoveContact = (id) => dispatch(deleteContact(id));
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector((state) => state.contacts.filter);
 
-  const getContactList = (state) => {
-    const { filter, items } = state.contacts;
-
-    return items.filter((contact) =>
-      contact.name.toLowerCase().includes(filter.toLowerCase())
-    );
-  };
-
-  const contacts = useSelector(getContactList);
+  useEffect(() => {
+    dispatch(fetchContacts(filter.name));
+  }, [dispatch, filter.name]);
 
   return (
     <ul className={styles.TaskList}>

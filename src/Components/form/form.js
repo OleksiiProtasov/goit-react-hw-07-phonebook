@@ -1,13 +1,22 @@
 import styles from "./style.module.css";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import shortid from "shortid";
-import { addContact } from "../../redux/contacts/contacts-operations";
+import {
+  addContact,
+  fetchContacts,
+} from "../../redux/contacts/contacts-operations";
 
 export default function Form() {
   const dispatch = useDispatch();
+  const contacts = useSelector((state) => state.contacts.items);
+  const filter = useSelector((state) => state.contacts.filter);
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch, filter.name]);
 
   const handleChange = (e) => {
     const { name, value } = e.currentTarget;
@@ -26,6 +35,15 @@ export default function Form() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const isExitingName = contacts.find(
+      (contact) => contact.name.toUpperCase() === name.toUpperCase()
+    );
+
+    if (isExitingName) {
+      alert(`${isExitingName.name} is already in contacts.`);
+      return;
+    }
 
     if (name.length === 0 || number.length === 0) {
       alert("Fields must be filled!");
